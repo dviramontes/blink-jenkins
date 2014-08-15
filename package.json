@@ -1,0 +1,15 @@
+{
+  "name": "blink-jenkins",
+  "version": "0.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^0.5.1",
+    "instapush": "0.0.7"
+  }
+}
