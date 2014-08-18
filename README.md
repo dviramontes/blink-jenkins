@@ -1,4 +1,4 @@
 blink-jenkins
 =============
 
-blink(1) + IFFF + instaPush
+blink(1) + IFFF + pushBullet

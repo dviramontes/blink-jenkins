@@ -1,53 +1,44 @@
-// TODO : notify  android phone that the application has shutdown
-
 // install node-hid globally
 // npm -g install node-hid
 
-var instapush = require("instapush");
+var pushbullet = require('pushbullet');
 var Blink1 = require('node-blink1');
 var chalk = require('chalk');
+var pusher = new pushbullet('v1l0tai5v2UPm0k8RUj8lvkhppJBhBWVbXujxSgudnBWS');
+var pushStream = pusher.stream()
 
-var msg;
-var devices = Blink1.devices().length
-var fadeMillis = 1000
+pushStream.connect();
+
+var msg,
+    devices = Blink1.devices().length,
+    fadeMillis = 1000,
+    blink1, blinker;
+
 msg = devices > 0 ? "blink usb connected" : "device connected ??"
-console.log(chalk.red(msg));
+
 if (devices > 0) {
-    try {
-        var b1 = new Blink1();
-    } catch (e) {
-        throw new Error(e);
-    }
-    // b1.fadeToRGB(fadeMillis, 0,0,255)
-    // b1.play(1)
-    b1.writePatternLine(200, 255, 65, 0, 0);
-    b1.writePatternLine(10, 0, 0, 0, 1);
-    b1.play(1)
-    // b1.pause();
-    b1.close(function(){console.log(chalk.blue('lights off'))})
+    blink1 = new Blink1();
 }
 
-instapush.settings({
-    id: '53ed7ed6a4c48a7643e8f7b2',
-    secret: 'd34d9e69b230d5a0b8452beb92161eaf',
+console.log(chalk.red(msg));
+console.log(chalk.blue("pushbullet stream connected"));
+
+pushStream.on('push', function(push) {
+
+    // if up
+    if (push.body.indexOf('jenkinsup') !== -1) {
+        console.log('jenkins-is-up');
+        blinker('red');
+    } else {
+        // if down
+        console.log('jenkins-is-down');
+        blinker('blue');
+    }
+
 })
 
-// Report to cell phone that raspberry-pi program has 
-// either crashed or  terminated..
-
-//process.stdin.resume();
-process.on('uncaughtException', function(err) {
-    console.log('Caught exception : ' + err);
-    instapush.notify({
-        "event": "blink-jenkins",
-        "trackers": {
-            "status": "down"
-        }
-    }, function(err, res) {
-        if (err) console.log(err)
-        if (res.status === 200) {
-            console.log(res.msg);
-        }
-    });
-    process.exit(1);
-})
+function blinker(color) {
+    blink1.writePatternLine(200, 255, 0, 0, 0);
+    blink1.writePatternLine(200, 0, 0, 0, 1);
+    blink1.play(0);
+}
