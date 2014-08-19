@@ -1,10 +1,10 @@
 // install node-hid globally
 // npm -g install node-hid
 
-var pushbullet = require('pushbullet');
+var PushBullet = require('pushbullet');
 var Blink1 = require('node-blink1');
 var chalk = require('chalk');
-var pusher = new pushbullet('v1l0tai5v2UPm0k8RUj8lvkhppJBhBWVbXujxSgudnBWS');
+var pusher = new PushBullet('v1l0tai5v2UPm0k8RUj8lvkhppJBhBWVbXujxSgudnBWS');
 var pushStream = pusher.stream()
 
 pushStream.connect();
@@ -21,12 +21,12 @@ if (devices > 0) {
 }
 
 console.log(chalk.red(msg));
-console.log(chalk.blue("pushbullet stream connected"));
+console.log(chalk.blue("PushBullet stream connected"));
 
 pushStream.on('push', function(push) {
-
+    console.log(push)
     // if up
-    if (push.body.indexOf('jenkinsup') !== -1) {
+    if (push && push.body && push.body.indexOf('jenkinsup') !== -1) {
         console.log('jenkins-is-up');
         blinker('red');
     } else {
@@ -38,7 +38,13 @@ pushStream.on('push', function(push) {
 })
 
 function blinker(color) {
-    blink1.writePatternLine(200, 255, 0, 0, 0);
-    blink1.writePatternLine(200, 0, 0, 0, 1);
-    blink1.play(0);
+    blink1.fadeToRGB(250,0,0,0)
+    blink1.fadeToRGB(500,255,125,255)
+    blink1.fadeToRGB(250,0,0,0)
+    blink1.fadeToRGB(500,0,125,255)
+    blink1.fadeToRGB(250,0,0,0)
+    blink1.fadeToRGB(500,50,255,0)
+    blink1.fadeToRGB(250,0,0,0)
 }
+
+blinker()
